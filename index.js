@@ -1,6 +1,7 @@
 const express = require('express');
 const app = express();
 const port = 3000;
+const router = express.Router();
 
 // Parts store
 const parts = [
@@ -13,16 +14,21 @@ const parts = [
 // Setup serving front-end code
 app.use('/', express.static('static'));
 
+//Setup middleware to do logging (generic log method)
+app.use((req, res, next) => { //for all routes
+    console.log(`${req.method} request for ${req.url}`);
+    next(); //keep going
+});
+
+
 // Get list of parts
-app.get('/api/parts', (req, res) => {
-    console.log(`GET request for ${req.url}`);
+router.get('/', (req, res) => {
     res.send(parts);
 });
 
 //Get details for a given part
-app.get('/api/parts/:parts_id', (req, res) => {
+router.get('/:parts_id', (req, res) => {
     const id = req.params.parts_id;
-    console.log(`GET request for ${req.url}`);
     const part = parts.find(p => p.id === parseInt(id));
     if(part){
         res.send(part);
@@ -31,6 +37,9 @@ app.get('/api/parts/:parts_id', (req, res) => {
         res.status(404).send(`Part ${id} was not found!`);
     }   
 });
+
+// Instal the router at /api/parts
+app.use('/api/parts', router)
 
 app.listen(port, () => {
     console.log(`Listening on port ${port}`);
