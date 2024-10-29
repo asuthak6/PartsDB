@@ -10,6 +10,9 @@ const parts = [
     {id: 103, name: 'Hat', colour: 'purple'}
 ];
 
+// Setup serving front-end code
+app.use('/', express.static('static'));
+
 // Get list of parts
 app.get('/api/parts', (req, res) => {
     console.log(`GET request for ${req.url}`);
